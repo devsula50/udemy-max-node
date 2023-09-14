@@ -20,6 +20,18 @@ exports.getIndex = (req, res, next) => {
   });
 };
 
+exports.getProduct = (req, res, next) => {
+  const productId = req.params.productId
+
+  // Product.fetchAll(product => {
+  //   res.render('shop/product-detail', {
+  //     prods: product,
+  //     pageTitle: 'Shop',
+  //     path: '/'
+  //   });
+  // });
+};
+
 exports.getCart = (req, res, next) => {
   res.render('shop/cart', {
     path: '/cart',

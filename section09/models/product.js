@@ -9,7 +9,7 @@ const p = path.join(
 
 const getProductsFromFile = cb => {
   fs.readFile(p, (err, fileContent) => {
-    if (err) {
+    if ( err ) {
       cb([]);
     } else {
       cb(JSON.parse(fileContent));
@@ -26,6 +26,7 @@ module.exports = class Product {
   }
 
   save() {
+    this.id = Math.random().toString()
     getProductsFromFile(products => {
       products.push(this);
       fs.writeFile(p, JSON.stringify(products), err => {
