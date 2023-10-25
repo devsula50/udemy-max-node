@@ -9,17 +9,14 @@ const p = path.join(
 
 module.exports = class Cart {
   static addProduct(id, price) {
-    console.log("add product");
     //Fetch the previous cart
     fs.readFile(p, (err, fileContent) => {
       let cart = { products: [], totalPrice: 0 };
       if (!err) {
-        console.log("read file");
         cart = JSON.parse(fileContent);
       }
 
       // Analyze the cart => Find existing product
-      console.log("find product");
       const existingProductIndex = cart.products.findIndex(
         (prod) => prod.id === id,
       );
@@ -27,23 +24,44 @@ module.exports = class Cart {
       let updatedProduct;
       // Add new product/ increase quantity
       if (existingProduct) {
-        console.log("exist product");
         updatedProduct = { ...existingProduct };
         updatedProduct.qty = updatedProduct.qty + 1;
         cart.products[existingProductIndex] = updatedProduct;
       } else {
-        console.log("not exist product");
         updatedProduct = { id: id, qty: 1 };
         cart.products = [...cart.products, updatedProduct];
       }
 
       cart.totalPrice = cart.totalPrice + price;
-      console.log("pricer");
 
-      fs.writeFile(p, JSON.stringify(cart), (err) => {
-        console.log("write file");
-        console.error(err);
-      });
+      fs.writeFile(p, JSON.stringify(cart), (err) => {});
+    });
+  }
+
+  static deleteProduct(id, price) {
+    fs.readFile(p, (err, fileContent) => {
+      if (err) {
+        return;
+      }
+      const cart = { ...JSON.parse(fileContent) };
+      const product = cart.products.findIndex((prod) => prod.id === id);
+
+      if (!product) return;
+      cart.totalPrice -= product.qty * price;
+      cart.products = cart.products.filter((product) => product.id !== id);
+
+      fs.writeFile(p, JSON.stringify(cart), (err) => {});
+    });
+  }
+
+  static getCart(cb) {
+    fs.readFile(p, (err, fileContent) => {
+      const cart = JSON.parse(fileContent);
+      if (err) {
+        cb(null);
+      } else {
+        cb(cart);
+      }
     });
   }
 };
